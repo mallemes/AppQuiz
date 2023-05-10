@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            background-image: url("https://wallpaperaccess.com/full/2384075.jpg");
+        }
+
+        .quiz {
+            width: 100%;
+            margin-top: 80px;
+            color: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background-color: #ABBFB8;
+            border: #ABBFB8 2px solid;
+            border-radius: 30px;
+            width: 500px;
+            height: 430px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .question {
+            width: 84%;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(93, 155, 164, 0.7);
+            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .newQuestion {
+            width: 84%;
+            margin-top: 20px;
+            background: rgba(167, 203, 210, 0.7);
+            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .answer {
+            width: 80%;
+            padding: 15px;
+            background: rgba(93, 155, 164, 0.7);
+            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .answerPR {
+            margin-top: 30px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .answer:hover {
+            color: darkred;
+            background: rgba(99, 135, 144, 1);
+            box-shadow: 0 4px 4px rgb(10, 93, 116);
+        }
+
+        .end {
+            color: black;
+        }
+
+        .endTitle {
+            margin-top: 20px;
+            border-radius: 30px;
+            font-size: 34px;
+            padding: 30px 90px 30px 90px;
+            background: #B8E893;
+            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.9);
+        }
+
+        .score {
+            font-size: 64px;
+            margin: 60px 140px 50px 180px;
+        }
+
+        .restart {
+            border-radius: 30px;
+            width: 60%;
+            font-size: 34px;
+            display: flex;
+            justify-content: center;
+            background: #B8E893;
+            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.9);
+            padding: 20px 20px 20px 20px;
+            margin-left: 70px;
+        }
+
+        .navbar {
+            background-color: #AFADAB;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .logo {
+            margin-left: 30px;
+            width: 30%;
+            color: #21786d;
+            font-size: 30px;
+        }
+
+        .navButtons {
+            width: 70%;
+
+
+        }
+
+        .navButton {
+            color: black;
+            font-weight: bold;
+            margin-left: 40px;
+            text-transform: uppercase;
+        }
+
+        .navButton:hover {
+            color: #782b2a;
+        }
+
+        .quizItem {
+            background-color: #ABBFB8;
+            border: #ABBFB8 2px solid;
+            border-radius: 30px;
+            width: 500px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 60px;
+        }
+
+        .quizzes {
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 100px;
+        }
+
+        .loginContent {
+            background-color: #ABBFB8;
+            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.9);
+            padding: 40px;
+            text-transform: uppercase;
+        }
+
+        .input {
+            width: 250px;
+            height: 30px;
+            background: rgba(93, 155, 164, 0.7);
+            border: rgba(0, 0, 0, 0.2) 2px solid;
+            font-size: 20px;
+            border-radius: 10px;
+            margin: 20px;
+        }
+
+        .btn {
+            margin-left: 80px;
+            margin-top: 20px;
+            background-color: #21786d;
+            width: 130px;
+            height: 40px;
+            border: rgba(0, 0, 0, 0.2) 2px solid;
+            border-radius: 10px;
+        }
+
+        .addQuizBtn {
+            background-color: #21786d;
+            width: 130px;
+            height: 40px;
+            border: rgba(0, 0, 0, 0.2) 2px solid;
+            border-radius: 10px;
+            margin: 10px;
+        }
+
+        .profile {
+            background-color: #ABBFB8;
+            display: flex;
+            height: 260px;
+            border: rgba(0, 0, 0, 0.2) 2px solid;
+
+        }</style>
+</head>
+<body>
+<div class="navbar">
+    <div class="logo">QUIZ APP</div>
+    <div class="navButtons">
+        <a href="" class="navButton">Home</a>
+        <a href="" class="navButton">About</a>
+        <a href="" class="navButton">ADD QUIZ</a>
+        <a href="" class="navButton">Profile</a>
+        <a href="" class="navButton">Register</a>
+    </div>
+    {% block basic %}
+
+    {% endblock %}
+</div>
+</body>
+</html>
