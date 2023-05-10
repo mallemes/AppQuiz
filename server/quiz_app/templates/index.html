@@ -3,8 +3,10 @@
     <div class="quizzes">
         {% for quizy in quizies %}
             <div class="quizItem">
-                <a href=""></a>
-               {{ quizy.name }}
+                <a href="{{ quizy.get_absolute_url }}">
+                    {{ quizy.name }}
+                </a>
+
             </div>
         {% endfor %}
     </div>

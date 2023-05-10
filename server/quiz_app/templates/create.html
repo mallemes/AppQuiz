@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block basic %}
+    <div class="container mt-5">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="text" class="form-control " name="name_quiz"
+                   placeholder="Name quiz">
+            <br>
+            <label class="label" for="">Image for quiz (less than 2 mb)</label>
+            <input type="file" class="form-control" name="poster">
+
+            <div id="content">
+            </div>
+            <div>
+                <button class="btn btn-success my-3f" style="margin-top: 15px;" type="submit">publish</button>
+            </div>
+        </form>
+    </div>
+    <input type="button" class="btn btn-success btn-sm" value="add row" style="margin-bottom: 15px;"
+           onclick="addRow()">
+    <script>
+        function addRow() {
+            const div = document.createElement('div');
+            {#div.className = 'row';#}
+            div.innerHTML = `
+           <hr>
+                <input type="text" class="form-control " name="text_question[]"
+                       placeholder="Enter question">
+                <br>
+                    <div class="d-flex">
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text bg-success" id="basic-addon1">A</span>
+                          </div>
+                          <input type="text"  class="w-25 form-control " placeholder="answer"   name="text_answer[]" aria-describedby="basic-addon1">
+
+                        </div>
+
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text bg-warning" id="basic-addon1">B</span>
+                          </div>
+                          <input type="text" class="w-25 form-control "  placeholder="answer"   name="text_answer[]" aria-describedby="basic-addon1">
+                        </div>
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text bg-danger" id="basic-addon1">C</span>
+                          </div>
+                          <input type="text" class="w-25 form-control " placeholder="answer"   name="text_answer[]" aria-describedby="basic-addon1">
+                        </div>
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text bg-primary" id="basic-addon1">D</span>
+                          </div>
+                          <input type="text" class="w-25 form-control" placeholder="answer"   name="text_answer[]" aria-describedby="basic-addon1">
+                        </div>
+                    <br><br>
+                </div>
+                    <span>Correct answer</span>
+                    <select id="ddlViewBy" class="w-25 form-control" name="isTrue[]">
+                        <option name="isTrue[A]" selected value="1">A</option>
+                        <option name="isTrue[B]"   value="2">B</option>
+                        <option  name="isTrue[C]" value="3">C</option>
+                        <option  name="isTrue[D]" value="4">D</option>
+                    </select>
+            `;
+            document.getElementById('content').appendChild(div);
+        }
+
+        function removeRow(input) {
+            document.getElementById('content').removeChild(input.parentNode);
+        }
+    </script>
+{% endblock %}
