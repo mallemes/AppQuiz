@@ -26,11 +26,9 @@
 
                     <div>
 
-{#                        <form action="{{ route('compt.quiz',$quiz->id)}}" method="POST">#}
+                        <form method="POST">
+                        {% csrf_token %}
                         {% for question in object.question_set.all %}
-
-
-
                             <div class="question bg-white p-3 border-bottom">
                                 <div class="d-flex flex-row align-items-center question-title">
                                     <h3 class="text-danger">Q.</h3>
@@ -38,13 +36,11 @@
                                 </div>
                                  {% for answer in question.answer_set.all %}
                                 <div class="ans ml-2 ">
-                                    <input type="hidden" name="questionId[{{question.id}}]"
-                                           value="{{question.id}}">
                                     <label class="radio"> <input type="checkbox"
                                                                  style="accent-color: green;width: 25px"
-                                                                 name="answerId[{{answer.id}}]"
+                                                                 name="answerId[]"
                                                                  value="{{answer.id}}"> <span
-                                    >{{answer.textAnswer}}</span>
+                                    >{{answer.textAnswer}} {{ answer.id }}</span>
                                     </label>
                                 </div>
                                {% endfor %}

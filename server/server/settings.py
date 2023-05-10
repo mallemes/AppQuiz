@@ -107,3 +107,7 @@ STATICFILES_DIRS = []
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = "profile"
+LOGOUT_REDIRECT_URL = "home"
+# INTERNAL_IPS = ["127.0.0.1"]
