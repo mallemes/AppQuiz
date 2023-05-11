@@ -29,10 +29,10 @@ class QuizShowView(DetailView):
         data = request.POST
         authUser = request.user
         quiz = self.get_object()
-        questions = quiz.question_set.all()
-        answerIds = data.getlist("answerId[]")
-        total = questions.count()
 
+        questions = quiz.question_set.all()
+        answerIds = data.getlist(f"answerId[]")
+        total = questions.count()
         score = 0
         for question in questions:
             answers = question.answer_set.all()
@@ -49,6 +49,11 @@ class QuizShowView(DetailView):
             Competition.objects.create(user=authUser, quiz_id=quiz.id, point=score, total=total)
 
         return redirect('index')
+
+    def get_context_data(self, **kwargs):
+        context = super(QuizShowView, self).get_context_data(**kwargs)
+        context['comptdUsers'] = Competition.objects.filter(quiz=self.get_object()).all()
+        return context
 
 
 class CreateQuizView(TemplateView):
@@ -111,6 +116,19 @@ class LoginUser(LoginView):
 
 class ProfileView(TemplateView):
     template_name = "profile.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileView, self).get_context_data(**kwargs)
+        competited_quiz = Competition.objects.filter(user=self.request.user).all()
+        count = []
+        for i in competited_quiz:
+            count.append(i.point / i.quiz.question_set.count() * 100)
+
+        print(count)
+        context["count"] = count
+        context["awards"] = competited_quiz
+
+        return context
 
 
 @login_required
