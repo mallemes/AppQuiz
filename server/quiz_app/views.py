@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import logout
+from django.contrib.auth import logout, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
@@ -7,9 +7,15 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, DetailView, CreateView
+from rest_framework import generics, permissions, status
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .forms import RegisterForm
 from .models import Quiz, Question, Answer, Competition
+from .serializers import RegisterSerializer, UserLoginSerializer
 
 
 class IndexView(TemplateView):
@@ -66,40 +72,22 @@ class CreateQuizView(TemplateView):
         text_question_list = data.getlist("text_question[]")
         text_answer_list = data.getlist("text_answer[]")
         isTrueList = data.getlist("isTrue[]")
-        myIstruees = []
-        if text_question_list is not None and text_answer_list is not None and isTrueList is not None and name_quiz:
-            count = 4
-            myIstruees.append(int(isTrueList[0]))
-            for i in range(1, len(isTrueList)):
-                myIstruees.append(int(isTrueList[i]) + count)
-                count += 4
+
+        if text_question_list and text_answer_list and isTrueList and name_quiz:
             quiz = Quiz(name=name_quiz, author=author)
             quiz.save()
-            sum = 0
-            for i in range(0, len(text_question_list)):
-                que = Question(questionText=text_question_list[i], quiz=quiz)
+
+            for i, text_question in enumerate(text_question_list):
+                que = Question(questionText=text_question, quiz=quiz)
                 que.save()
-                for j in range(sum, sum + 4):
-                    if myIstruees[i] - 1 == j:
-                        ans = Answer(question=que, textAnswer=text_answer_list[j], isCorrect=True)
-                        ans.question = que
-                        ans.textAnswer = text_answer_list[j]
-                        ans.isCorrect = True
-                        ans.save()
-                    else:
-                        ans = Answer()
-                        ans.question = que
-                        ans.textAnswer = text_answer_list[j]
-                        ans.isCorrect = False
-                        ans.save()
-                sum = sum + 4
+                start_index = i * 4
+                end_index = start_index + 4
+
+                for j, text_answer in enumerate(text_answer_list[start_index:end_index]):
+                    ans = Answer(question=que, textAnswer=text_answer, isCorrect=(j == int(isTrueList[i]) - 1))
+                    ans.save()
 
         return redirect('index')
-        # 'name_quiz': ['quiz1'],
-        # 'poster': [''],
-        # 'text_question[]': ['Qazaqstan astanasy', 'question2'],
-        # 'text_answer[]': ['1text', '2text', '3text', '4text', 'answer2 - 1', 'answer2 - 2', 'answer2 - 3', 'answer2 - 4'],
-        # 'isTrue[]': ['1 ', '2']}>
 
 
 class Register(CreateView):
@@ -136,3 +124,67 @@ def my_user_logout(request):
     logout(request)
     messages.info(request, "success")
     return redirect("/")
+
+
+# =======================API=======================
+
+class RegisterViewAPI(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
+    serializer_class = RegisterSerializer
+
+
+class UserLogin(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = (SessionAuthentication,)
+
+    def post(self, request):
+        data = request.data
+        serializer = UserLoginSerializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.check_user(data)
+            authUser = User.objects.filter(username=data.get("username")).values()
+            print(authUser)
+            login(request, user)
+            return Response(authUser[0], status=status.HTTP_200_OK)
+
+
+class UserLogout(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+
+    def post(self, request):
+        logout(request)
+        return Response(status=status.HTTP_200_OK)
+
+
+class CreateQuizAPI(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = (SessionAuthentication,)
+
+    ##
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        name_quiz = data.get('name_quiz')
+        author = request.user
+        text_question_list = data.get("text_question[]", [])
+        text_answer_list = data.get("text_answer[]", [])
+        isTrueList = data.get("isTrue[]", [])
+
+        if text_question_list and text_answer_list and isTrueList and name_quiz:
+            quiz = Quiz(name=name_quiz, author=author)
+            quiz.save()
+
+            for i, text_question in enumerate(text_question_list):
+                que = Question(questionText=text_question, quiz=quiz)
+                que.save()
+                start_index = i * 4
+                end_index = start_index + 4
+
+                for j, text_answer in enumerate(text_answer_list[start_index:end_index]):
+                    ans = Answer(question=que, textAnswer=text_answer, isCorrect=(j == int(isTrueList[i])))
+                    ans.save()
+
+            return Response(status=status.HTTP_302_FOUND)  # Redirect response
+        else:
+            return Response({'error': 'Invalid data'}, status=status.HTTP_400_BAD_REQUEST)

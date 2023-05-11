@@ -5,7 +5,7 @@ from django.urls import reverse
 
 class Quiz(models.Model):
     name = models.CharField(max_length=250)
-    poster = models.ImageField(null=True, blank=True)
+    poster = models.ImageField(null=True, blank=True, upload_to="quiz/")
     author = models.CharField(null=True, blank=True, max_length=250)  # author
     users = models.ManyToManyField(User, through="Competition")
     created_at = models.DateTimeField(auto_now_add=True)
