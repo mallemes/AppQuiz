@@ -53,7 +53,7 @@ print(arr[0])
 
 {
 "name_quiz": "quiz1 - API",
- "text_question[]": ["Qazaqstan astanasy API", "question2 API"],
- "text_answer[]": ["1text-true", "2text", "3text", "4text", "answer2 - 1", "answer2 - 2", "answer2 - 3 true", "answer2 - 4"],
- "isTrue[]": ["0", "2"]
+ "text_question[]": ["Qazaqstan astanasy API"],
+ "text_answer[]": ["1text-true api", "2text api", "3text api", "4text api"],
+ "isTrue[]": [0]
  }

@@ -5,18 +5,45 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueValidator
 
-from .models import Quiz, Answer
-
-
-class QuizSerializer(serializers.ModelSerializer):
-    model = Quiz
-
-    class Meta:
-        fields = ["questionText", "created_at"]
+from .models import Quiz, Answer, Question
 
 
 class AnswerSerializer(serializers.ModelSerializer):
-    model = Answer
+    class Meta:
+        model = Answer
+        fields = ["id", "textAnswer", "isCorrect"]
+
+
+class QuestionSerializer(serializers.ModelSerializer):
+    answer_set = AnswerSerializer(many=True)
+
+    class Meta:
+        model = Question
+        fields = ["id", "questionText", "quiz", "answer_set"]
+
+
+class QuizSerializer(serializers.ModelSerializer):
+    question_set = QuestionSerializer(many=True)
+
+    class Meta:
+        model = Quiz
+        fields = ["id", "name", "created_at", "author", "question_set"]
+
+    # def create(self, validated_data):
+    #     print(validated_data)
+    #     pass
+    #     # question_set = validated_data.pop('question_set')
+    #     # quiz = super().create(validated_data)
+    #     # for child in question_set:
+    #     #     child['quiz'] = quiz
+    #     # self.fields['question_set'].create(question_set)
+    #     # return quiz
+
+
+class QuizSerializer2(serializers.ModelSerializer):
+    class Meta:
+        model = Quiz
+        fields = ["id", "name", "created_at", "author"]
 
 
 class RegisterSerializer(serializers.ModelSerializer):

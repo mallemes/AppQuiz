@@ -7,7 +7,7 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, DetailView, CreateView
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, status, viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 
 from .forms import RegisterForm
 from .models import Quiz, Question, Answer, Competition
-from .serializers import RegisterSerializer, UserLoginSerializer
+from .serializers import RegisterSerializer, UserLoginSerializer, QuizSerializer, QuizSerializer2
 
 
 class IndexView(TemplateView):
@@ -158,14 +158,15 @@ class UserLogout(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class CreateQuizAPI(APIView):
+class QuizViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
-    authentication_classes = (SessionAuthentication,)
+    queryset = Quiz.objects.all()
+    serializer_class = QuizSerializer
 
-    ##
     def post(self, request, *args, **kwargs):
         data = request.data
         name_quiz = data.get('name_quiz')
+        # name_quiz = data.get('name')
         author = request.user
         text_question_list = data.get("text_question[]", [])
         text_answer_list = data.get("text_answer[]", [])
@@ -182,9 +183,13 @@ class CreateQuizAPI(APIView):
                 end_index = start_index + 4
 
                 for j, text_answer in enumerate(text_answer_list[start_index:end_index]):
-                    ans = Answer(question=que, textAnswer=text_answer, isCorrect=(j == int(isTrueList[i])))
+                    ans = Answer(question=que, textAnswer=text_answer, isCorrect=(j == isTrueList[i]))
                     ans.save()
 
-            return Response(status=status.HTTP_302_FOUND)  # Redirect response
+            return Response({'message': 'quiz successfully created'}, status=status.HTTP_302_FOUND)  # Redirect response
         else:
-            return Response({'error': 'Invalid data'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'error invalid data'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request, *args, **kwargs):
+        self.serializer_class = QuizSerializer2
+        return super().list(request)
