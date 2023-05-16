@@ -8,7 +8,6 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, DetailView, CreateView
 from rest_framework import generics, permissions, status, viewsets
-from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -134,9 +133,10 @@ class RegisterViewAPI(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 
 
+# @method_decorator(csrf_protect, name="dispatch")
 class UserLogin(APIView):
     permission_classes = (permissions.AllowAny,)
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = ()
 
     def post(self, request):
         data = request.data
@@ -159,18 +159,19 @@ class UserLogout(APIView):
 
 
 class QuizViewSet(viewsets.ModelViewSet):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (AllowAny,)
     queryset = Quiz.objects.all()
     serializer_class = QuizSerializer
 
     def post(self, request, *args, **kwargs):
         data = request.data
+
         name_quiz = data.get('name_quiz')
         # name_quiz = data.get('name')
         author = request.user
-        text_question_list = data.get("text_question[]", [])
-        text_answer_list = data.get("text_answer[]", [])
-        isTrueList = data.get("isTrue[]", [])
+        text_question_list = data.get("text_questions", [])
+        text_answer_list = data.get("text_answers", [])
+        isTrueList = data.get("isTrues", [])
 
         if text_question_list and text_answer_list and isTrueList and name_quiz:
             quiz = Quiz(name=name_quiz, author=author)
@@ -183,7 +184,7 @@ class QuizViewSet(viewsets.ModelViewSet):
                 end_index = start_index + 4
 
                 for j, text_answer in enumerate(text_answer_list[start_index:end_index]):
-                    ans = Answer(question=que, textAnswer=text_answer, isCorrect=(j == isTrueList[i]))
+                    ans = Answer(question=que, textAnswer=text_answer, isCorrect=(j == isTrueList[i] - 1))
                     ans.save()
 
             return Response({'message': 'quiz successfully created'}, status=status.HTTP_302_FOUND)  # Redirect response

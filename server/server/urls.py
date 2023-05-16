@@ -11,6 +11,7 @@ urlpatterns = [
     path('api/alpha/login/', UserLogin.as_view(), name='api_login'),
     path('api/alpha/logout/', UserLogout.as_view(), name='api_logout'),
     path('api/alpha/quiz/', QuizViewSet.as_view({"get": "list"})),
+    # path('api/alpha/setcsrf/', SetCSRFCookie.as_view()),
     path('api/alpha/quiz/<int:pk>', QuizViewSet.as_view({"get": "retrieve"})),
     # path('api/alpha/quiz/', CreateQuizAPI.as_view(), name='api_create_quiz'),
     path('', IndexView.as_view()),
