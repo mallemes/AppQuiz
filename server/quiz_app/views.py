@@ -194,3 +194,5 @@ class QuizViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         self.serializer_class = QuizSerializer2
         return super().list(request)
+
+
